@@ -190,8 +190,16 @@ def fit_peaks(x, y, n_peaks, **kwargs):
 
     # use found peaks as initial guesses
     p0 = []
-    for i in range(n_peaks):
+    bounds = ([], [])
+    for i in range(len(yp)):
         p0.extend([yp[i], xp[i], 10])
+        bounds[0].extend([-np.inf, -np.inf, 0]) # ensure peaks have std>0
+        bounds[1].extend([np.inf, np.inf, np.inf])
+    # now add dummy guesses for remaining peaks, if find_peaks hasn't found enough
+    for i in range(len(yp), n_peaks):
+        p0.extend([np.median(y), np.median(x), 10])
+        bounds[0].extend([-np.inf, -np.inf, 0])
+        bounds[1].extend([np.inf, np.inf, np.inf])
 
     # then fit func curve
-    return curve_fit(gauss, x, y, p0=p0, **kwargs)
+    return curve_fit(gauss, x, y, p0=p0, bounds=bounds, **kwargs)
