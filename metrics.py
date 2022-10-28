@@ -157,3 +157,41 @@ def line_defect_p(img):
         cv2.line(line_img, (x1, y1), (x2, y2), color=255, thickness=2)
 
     return line_img.sum()/line_img.size/255, line_img, lines
+
+'''
+Spectra Metrics
+'''
+from scipy.optimize import curve_fit
+from scipy.signal import find_peaks
+
+# function to fit is sum of n gaussian curves
+def gauss(x, *p):
+    # amplitude, mean, stdev
+    y = 0
+    for i in range(0, len(p), 3):
+        A, mu, sigma = p[i], p[i+1], p[i+2]
+        y += A*np.exp(-(x-mu)**2/(2.*sigma**2))
+    return y
+
+
+def fit_peaks(x, y, n_peaks, **kwargs):
+    # help out the curve_fit by providing good initial guesses
+    
+    # first find the likely peaks' location
+    height = np.median(y) + np.std(y) # the height above the background noise
+    peaks, props = find_peaks(y, height=height, distance=80)
+
+    # take n highest peaks
+    xp, yp = x[peaks], y[peaks]
+    idx = np.argsort(yp)
+    xp, yp = xp[idx][-n_peaks:], yp[idx][-n_peaks:]
+    idx = np.argsort(xp) # now rearrange in order of wavelength
+    xp, yp = xp[idx], yp[idx]
+
+    # use found peaks as initial guesses
+    p0 = []
+    for i in range(n_peaks):
+        p0.extend([yp[i], xp[i], 10])
+
+    # then fit func curve
+    return curve_fit(gauss, x, y, p0=p0, **kwargs)
