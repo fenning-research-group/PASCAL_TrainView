@@ -147,6 +147,7 @@ def correlation_plot(metricdf, x_col=str, y_col=str, batch=str, save=True):
         plt.savefig(
             f"{TodaysDate}_{batch}_{x_col}_{y_col}.png", dpi=300, bbox_inches="tight"
         )
+    plt.close()
 
 
 ##
@@ -214,6 +215,7 @@ def correlation_matrix(metricdf, method="pearson", batch=str, save=True):
         plt.savefig(
             f"{TodaysDate}_{batch}_correlation_matrix.png", dpi=300, bbox_inches="tight"
         )
+    plt.close()
 
 
 ##
@@ -353,6 +355,7 @@ def plot_bf(rawdf, batch=str, save=True):
     TodaysDate = time.strftime("%Y%m%d")
     if save == True:
         plt.savefig(f"{TodaysDate}_{batch}_camera_bf.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
 
 def plot_df(rawdf, batch=str, save=True):
@@ -453,6 +456,7 @@ def plot_df(rawdf, batch=str, save=True):
     TodaysDate = time.strftime("%Y%m%d")
     if save == True:
         plt.savefig(f"{TodaysDate}_{batch}_camera_df.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
 
 def plot_pl(rawdf, batch=str, save=True):
@@ -553,6 +557,7 @@ def plot_pl(rawdf, batch=str, save=True):
     TodaysDate = time.strftime("%Y%m%d")
     if save == True:
         plt.savefig(f"{TodaysDate}_{batch}_camera_pl.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
 
 ##
@@ -1048,7 +1053,6 @@ def baseline_analysis(
     plot_df(rawdf, batch=batch, save=save)
     plot_bf(rawdf, batch=batch, save=save)
     plot_pl(rawdf, batch=batch, save=save)
-    plt.close()
     os.chdir("..")
     return metricdf, rawdf
 
