@@ -724,6 +724,7 @@ def baseline_analysis(
     plot_df(rawdf, batch=batch, save=save)
     plot_bf(rawdf, batch=batch, save=save)
     plot_pl(rawdf, batch=batch, save=save)
+    plt.close()
     os.chdir("..")
     return metricdf, rawdf
 
