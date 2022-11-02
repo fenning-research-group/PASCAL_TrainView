@@ -605,119 +605,259 @@ def baseline_analysis(
             test3,
         )  # .dropna would make correlation plots work better, but this shows all data
         rawdf = rawdf.reset_index(drop=True)
-        metricdf_dropped = metricdf.dropna()
+        metricdf_dropped = metricdf.dropna(subset=["pce_r"])
 
     # chronoglical plots
     correlation_plot(
-        metricdf, x_col="spincoat0", y_col="pl_intensity_0", batch=batch, save=save
+        metricdf=metricdf_dropped,
+        x_col="spincoat0",
+        y_col="pl_intensity_0",
+        batch=batch,
+        save=save,
     )
     correlation_plot(
-        metricdf, x_col="spincoat0", y_col="pl_peakev_0", batch=batch, save=save
+        metricdf=metricdf_dropped,
+        x_col="spincoat0",
+        y_col="pl_peakev_0",
+        batch=batch,
+        save=save,
     )
     correlation_plot(
-        metricdf, x_col="spincoat0", y_col="pl_fwhm_0", batch=batch, save=save
+        metricdf=metricdf_dropped,
+        x_col="spincoat0",
+        y_col="pl_fwhm_0",
+        batch=batch,
+        save=save,
     )
 
     if metricdf["pce_f"].isnull().values.any() == True:
         correlation_plot(
-            metricdf, x_col="spincoat0", y_col="pce_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="pce_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="spincoat0", y_col="pce_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="pce_r",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="spincoat0", y_col="ff_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="ff_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="spincoat0", y_col="ff_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="ff_r",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="spincoat0", y_col="voc_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="voc_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="spincoat0", y_col="voc_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="voc_r",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="spincoat0", y_col="jsc_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="jsc_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="spincoat0", y_col="jsc_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="jsc_r",
+            batch=batch,
+            save=save,
         )
 
         # compare to PL
         correlation_plot(
-            metricdf, x_col="pl_intensity_0", y_col="pce_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="pce_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_intensity_0", y_col="pce_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="pce_r",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_intensity_0", y_col="ff_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="ff_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_intensity_0", y_col="ff_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="ff_r",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_intensity_0", y_col="voc_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="voc_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_intensity_0", y_col="voc_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="voc_r",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_intensity_0", y_col="jsc_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="jsc_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_intensity_0", y_col="jsc_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="jsc_r",
+            batch=batch,
+            save=save,
         )
 
         correlation_plot(
-            metricdf, x_col="pl_peakev_0", y_col="pce_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="pce_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_peakev_0", y_col="pce_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="pce_r",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_peakev_0", y_col="ff_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="ff_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_peakev_0", y_col="ff_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="ff_r",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_peakev_0", y_col="voc_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="voc_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_peakev_0", y_col="voc_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="voc_r",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_peakev_0", y_col="jsc_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="jsc_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_peakev_0", y_col="jsc_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="jsc_r",
+            batch=batch,
+            save=save,
         )
 
         correlation_plot(
-            metricdf, x_col="pl_fwhm_0", y_col="pce_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="pce_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_fwhm_0", y_col="pce_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="pce_r",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_fwhm_0", y_col="ff_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="ff_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_fwhm_0", y_col="ff_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="ff_r",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_fwhm_0", y_col="voc_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="voc_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_fwhm_0", y_col="voc_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="voc_r",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_fwhm_0", y_col="jsc_f", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="jsc_f",
+            batch=batch,
+            save=save,
         )
         correlation_plot(
-            metricdf, x_col="pl_fwhm_0", y_col="jsc_r", batch=batch, save=save
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="jsc_r",
+            batch=batch,
+            save=save,
         )
 
     correlation_matrix(metricdf, method="pearson", batch=batch, save=save)
