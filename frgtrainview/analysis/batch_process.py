@@ -166,6 +166,12 @@ def correlation_matrix(metricdf, method="pearson", batch=str, save=True):
         "voc_r",
         "jsc_f",
         "jsc_r",
+        "rsh_f",
+        "rsh_r",
+        "rs_f",
+        "rs_r",
+        "rch_f",
+        "rch_r",
         "pl_intensity_0",
         "pl_peakev_0",
         "pl_fwhm_0",
@@ -688,6 +694,50 @@ def baseline_analysis(
             save=save,
         )
 
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="rsh_f",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="rsh_r",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="rs_f",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="rs_r",
+            batch=batch,
+            save=save,
+        )
+
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="rch_f",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="spincoat0",
+            y_col="rch_r",
+            batch=batch,
+            save=save,
+        )
+
         # compare to PL
         correlation_plot(
             metricdf=metricdf_dropped,
@@ -748,6 +798,51 @@ def baseline_analysis(
 
         correlation_plot(
             metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="rsh_f",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="rsh_r",
+            batch=batch,
+            save=save,
+        )
+
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="rs_f",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="rs_r",
+            batch=batch,
+            save=save,
+        )
+
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="rch_f",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_intensity_0",
+            y_col="rch_r",
+            batch=batch,
+            save=save,
+        )
+
+        correlation_plot(
+            metricdf=metricdf_dropped,
             x_col="pl_peakev_0",
             y_col="pce_f",
             batch=batch,
@@ -799,6 +894,50 @@ def baseline_analysis(
             metricdf=metricdf_dropped,
             x_col="pl_peakev_0",
             y_col="jsc_r",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="rsh_f",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="rsh_r",
+            batch=batch,
+            save=save,
+        )
+
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="rs_f",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="rs_r",
+            batch=batch,
+            save=save,
+        )
+
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="rch_f",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_peakev_0",
+            y_col="rch_r",
             batch=batch,
             save=save,
         )
@@ -856,6 +995,51 @@ def baseline_analysis(
             metricdf=metricdf_dropped,
             x_col="pl_fwhm_0",
             y_col="jsc_r",
+            batch=batch,
+            save=save,
+        )
+
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="rsh_f",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="rsh_r",
+            batch=batch,
+            save=save,
+        )
+
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="rs_f",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="rs_r",
+            batch=batch,
+            save=save,
+        )
+
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="rch_f",
+            batch=batch,
+            save=save,
+        )
+        correlation_plot(
+            metricdf=metricdf_dropped,
+            x_col="pl_fwhm_0",
+            y_col="rch_r",
             batch=batch,
             save=save,
         )
