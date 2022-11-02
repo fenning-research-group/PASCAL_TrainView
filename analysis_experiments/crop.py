@@ -1,0 +1,56 @@
+import cv2
+import numpy as np
+
+def crop_pl(img):
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    thresh = cv2.inRange(gray, 250, 256) # threshold on white, the border of sample
+
+    # use houghline transform to clean up and create border
+    minLineLength = thresh.shape[0]*0.03
+    maxLineGap = 200
+    lines = cv2.HoughLinesP(thresh, 1, np.pi/180, 100, minLineLength=minLineLength, maxLineGap=maxLineGap)
+    if lines is None:
+        lines = np.zeros(0)
+
+    # now draw the lines
+    line_img = np.zeros_like(gray, np.uint8)
+    for r_theta in lines:
+        arr = np.array(r_theta[0], dtype=np.int32)
+        x1, y1, x2, y2 = arr
+        cv2.line(line_img, (x1, y1), (x2, y2), 255, 4)
+
+    # close in gaps to reduce noise
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (30,30))
+    filled = cv2.morphologyEx(line_img, cv2.MORPH_CLOSE, kernel, iterations=4)
+    filled = cv2.bitwise_not(filled)
+
+    # now get the bounding box of the largest area square, which is probably the sample
+    box_image = np.zeros_like(filled, np.uint8)
+    contours, _ = cv2.findContours(filled, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    biggest_rect = None
+    biggest_area = 0
+    for c in contours:
+        # cv2.drawContours(final,[c],0,(0,0,0),2)
+        # get rotated rectangle from contour
+        rot_rect = cv2.minAreaRect(c)
+        area = cv2.contourArea(c)
+
+        if area > biggest_area:
+            box = cv2.boxPoints(rot_rect)
+            box = np.int0(box)
+            biggest_rect = box
+            biggest_area = area
+
+    # draw rectangle on img
+    cv2.drawContours(box_image,[biggest_rect],0,255,2)
+    final = box_image.copy()
+
+    # now floodfill to use as mask
+    h,w = final.shape
+    cv2.floodFill(final, np.zeros((h+2,w+2), np.uint8), (0,0), 255)
+    final = cv2.bitwise_not(final)
+
+    # now show mask
+    masked = cv2.bitwise_and(img, img, mask=final)
+
+    return masked
