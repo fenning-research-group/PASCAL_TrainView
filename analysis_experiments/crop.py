@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-def crop_pl(img):
+def crop_pl(img, output_shape=None):
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     thresh = cv2.inRange(gray, 250, 256) # threshold on white, the border of sample
 
@@ -44,13 +44,24 @@ def crop_pl(img):
     # draw rectangle on img
     cv2.drawContours(box_image,[biggest_rect],0,255,2)
     final = box_image.copy()
+    
+    # use rectangle corners to perspective transform
+    # [0] = top left, [1] = top right, [2] = bottom right, [3] = bottom left
+    if output_shape == None:
+        # if output_shape is not provided, then compute it!
+        # we'll just assume we want to keep the same overall size
+        # this computes the sidelengths of the biggest rectangle
+        output_shape = (int(np.linalg.norm(biggest_rect[1] - biggest_rect[0])),
+                int(np.linalg.norm(biggest_rect[3] - biggest_rect[0])))
 
-    # now floodfill to use as mask
-    h,w = final.shape
-    cv2.floodFill(final, np.zeros((h+2,w+2), np.uint8), (0,0), 255)
-    final = cv2.bitwise_not(final)
+    output_pts = np.array([
+        [0,0],
+        [output_shape[0], 0],
+        [output_shape[0], output_shape[1]],
+        [0, output_shape[1]],
+        ], np.float32)
 
-    # now show mask
-    masked = cv2.bitwise_and(img, img, mask=final)
-
-    return masked
+    biggest_rect = np.float32(biggest_rect)
+    M = cv2.getPerspectiveTransform(biggest_rect, output_pts) # needs float32 arrays
+    out = cv2.warpPerspective(img, M, output_shape, flags=cv2.INTER_LINEAR)
+    return out
