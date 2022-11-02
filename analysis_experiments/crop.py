@@ -2,6 +2,16 @@ import cv2
 import numpy as np
 
 def crop_pl(img, output_shape=None):
+    """Crops a PL image so that only the sample is visible.
+
+    Args:
+        img (ndarray): a PL image.
+        output_shape (Tuple[int, int]): desired size for the output image.
+    
+    Returns:
+        ndarray: a cropped PL image containing only the sample, with shape==output_shape if given.
+        Otherwise, the shape is the size of the bounding box that contains the sample in the original image img.
+    """
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     thresh = cv2.inRange(gray, 250, 256) # threshold on white, the border of sample
 
