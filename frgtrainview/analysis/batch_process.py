@@ -552,7 +552,7 @@ def plot_pl(rawdf, batch=str, save=True):
 ##
 
 
-def batch_process(
+def baseline_analysis(
     batch=str,
     chardir=str,
     paramdir=str,
@@ -600,7 +600,10 @@ def batch_process(
 
         test2 = test2[~(test2["pl_intensity_0"] <= drop_low_pl)]
 
-        metricdf, rawdf = test2, test3
+        metricdf, rawdf = (
+            test2,
+            test3,
+        )  # .dropna would make correlation plots work better, but this shows all data
         rawdf = rawdf.reset_index(drop=True)
 
     # chronoglical plots

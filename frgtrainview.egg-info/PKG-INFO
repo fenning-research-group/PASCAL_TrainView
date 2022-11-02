@@ -1,0 +1,31 @@
+Metadata-Version: 2.1
+Name: frgtrainview
+Version: 0.1
+Summary: Automated analsyis of the Fenning Research Group automated synthesis platform
+Home-page: UNKNOWN
+Author: Deniz N. Cakan
+Author-email: dcakan@eng.ucsd.edu
+License: MIT
+Download-URL: https://github.com/fenning-research-group/PASCAL_TrainView/batch_process
+Description: # Pascal Analysis
+        This repo is designed to assist with typical batch analysis of PASCAL's characterization train. In addition, efforts are being made toward building out metrics that tie absorber level characterization to device. 
+        
+        ## Getting Started
+        Requires the frgpascal library in the PASCAL repo:
+        `pip install git+https://github.com/fenning-research-group/PASCAL.git`
+        
+        Other dependencies:
+        `pip install numpy matplotlib pandas scipy tensorflow`
+        
+Keywords: materials,science,machine,automation,data science
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Scientific/Engineering :: Information Analysis
+Classifier: Topic :: Scientific/Engineering :: Physics
+Classifier: Topic :: Scientific/Engineering :: Chemistry
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Description-Content-Type: text/markdown

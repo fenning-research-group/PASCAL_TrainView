@@ -1,0 +1,7 @@
+README.md
+setup.py
+frgtrainview.egg-info/PKG-INFO
+frgtrainview.egg-info/SOURCES.txt
+frgtrainview.egg-info/dependency_links.txt
+frgtrainview.egg-info/requires.txt
+frgtrainview.egg-info/top_level.txt
