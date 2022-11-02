@@ -11,6 +11,7 @@ def crop_pl(img, output_shape=None):
     Returns:
         ndarray: a cropped PL image containing only the sample, with shape==output_shape if given.
         Otherwise, the shape is the size of the bounding box that contains the sample in the original image img.
+        ndarray: an array of length 4 representing the corners of the bounding box the sample is contained within on the original image img.
     """
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     thresh = cv2.inRange(gray, 250, 256) # threshold on white, the border of sample
@@ -68,4 +69,4 @@ def crop_pl(img, output_shape=None):
     biggest_rect = np.float32(biggest_rect)
     M = cv2.getPerspectiveTransform(biggest_rect, output_pts) # needs float32 arrays
     out = cv2.warpPerspective(img, M, output_shape, flags=cv2.INTER_LINEAR)
-    return out
+    return out, biggest_rect
