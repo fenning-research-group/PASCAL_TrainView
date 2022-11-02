@@ -25,12 +25,10 @@ def crop_pl(img, output_shape=None):
     filled = cv2.bitwise_not(filled)
 
     # now get the bounding box of the largest area square, which is probably the sample
-    box_image = np.zeros_like(filled, np.uint8)
     contours, _ = cv2.findContours(filled, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     biggest_rect = None
     biggest_area = 0
     for c in contours:
-        # cv2.drawContours(final,[c],0,(0,0,0),2)
         # get rotated rectangle from contour
         rot_rect = cv2.minAreaRect(c)
         area = cv2.contourArea(c)
@@ -40,10 +38,6 @@ def crop_pl(img, output_shape=None):
             box = np.int0(box)
             biggest_rect = box
             biggest_area = area
-
-    # draw rectangle on img
-    cv2.drawContours(box_image,[biggest_rect],0,255,2)
-    final = box_image.copy()
     
     # use rectangle corners to perspective transform
     # [0] = top left, [1] = top right, [2] = bottom right, [3] = bottom left
