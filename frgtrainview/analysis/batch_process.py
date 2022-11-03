@@ -1,4 +1,5 @@
 from frgpascal.analysis.processing import load_all, compress_jv, get_worklist_times
+from frgtrainview.analysis import crop
 from scipy import stats
 from natsort import natsorted
 from natsort import index_natsorted
@@ -481,7 +482,10 @@ def plot_pl(rawdf, batch=str, save=True):
                 name = rawdf["name"][item]
                 pl_intensity_0 = rawdf["pl_intensity_0"][item]
                 pl_peakev_0 = rawdf["pl_peakev_0"][item]
-                ax[n, k].imshow(rawdf["plimg_0"][item], cmap="viridis")
+                ax[n, k].imshow(
+                    crop.crop_pl(np.uint8(rawdf["plimg_0"][item] * 255))[0],
+                    cmap="viridis",
+                )
             except:
                 ax[n, k].imshow(blank)
                 name = "eblank"
