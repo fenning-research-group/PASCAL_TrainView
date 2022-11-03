@@ -154,7 +154,7 @@ def correlation_plot(metricdf, x_col=str, y_col=str, batch=str, save=True):
 ##
 
 
-def correlation_matrix(metricdf, method="pearson", batch=str, save=True):
+def correlation_matrix_jv(metricdf, method="pearson", batch=str, save=True):
     save = save
     metricdf = metricdf
     method = method
@@ -218,6 +218,56 @@ def correlation_matrix(metricdf, method="pearson", batch=str, save=True):
         )
     plt.close()
 
+
+def correlation_matrix(metricdf, method="pearson", batch=str, save=True):
+    save = save
+    metricdf = metricdf
+    method = method
+    batch = batch
+    columns = [
+        "pl_intensity_0",
+        "pl_peakev_0",
+        "pl_fwhm_0",
+        "t_bandgap_0",
+        "spincoat0",
+    ]
+    d = metricdf[columns]
+    d = d.apply(pd.to_numeric, errors="coerce")
+
+    # Compute the correlation matrix
+    corr = d.corr(
+        method=method
+        # method='kendall'
+    )
+
+    # Generate a mask for the upper triangle
+    # mask = np.triu(np.ones_like(corr, dtype=bool))
+    mask = np.eye(corr.shape[0])
+
+    # Set up the matplotlib figure
+    f, ax = plt.subplots(figsize=(10, 10))
+
+    # Generate a custom diverging colormap
+    cmap = sns.diverging_palette(230, 20, as_cmap=True)
+
+    # Draw the heatmap with the mask and correct aspect ratio
+    sns.heatmap(
+        corr,
+        mask=mask,
+        cmap=cmap,
+        # vmax=.7,
+        # vmin=-0.7,
+        center=0,
+        square=True,
+        linewidths=0.5,
+        cbar_kws={"shrink": 0.5, "label": "Pearson Correlation"},
+    )
+    TodaysDate = time.strftime("%Y%m%d")
+    if save == True:
+        plt.savefig(
+            f"{TodaysDate}_{batch}_correlation_matrix.png", dpi=300, bbox_inches="tight"
+        )
+    plt.close()
 
 ##
 
@@ -665,8 +715,9 @@ def baseline_analysis(
                     batch=batch,
                     save=save,
                 )
-
-    correlation_matrix(metricdf, method="pearson", batch=batch, save=save)
+        correlation_matrix_jv(metricdf=metricdf_dropped, method="pearson", batch=batch, save=save)
+    if jv_exist == False:
+        correlation_matrix(metricdf=metricdf_dropped, method="pearson", batch=batch, save=save)
     plot_df(rawdf, batch=batch, save=save)
     plot_bf(rawdf, batch=batch, save=save)
     plot_pl(rawdf, batch=batch, save=save)
