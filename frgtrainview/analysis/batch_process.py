@@ -518,7 +518,7 @@ def plot_pl(rawdf, batch=str, save=True):
                 horizontalalignment="left",
                 verticalalignment="top",
                 transform=ax[n, k].transAxes,
-                color="lime",
+                color="Black",
                 weight="bold",
             )
             plt.text(
@@ -528,7 +528,7 @@ def plot_pl(rawdf, batch=str, save=True):
                 horizontalalignment="left",
                 verticalalignment="top",
                 transform=ax[n, k].transAxes,
-                color="lime",
+                color="Black",
                 weight="bold",
             )
 
@@ -539,7 +539,7 @@ def plot_pl(rawdf, batch=str, save=True):
                 horizontalalignment="left",
                 verticalalignment="top",
                 transform=ax[n, k].transAxes,
-                color="Yellow",
+                color="Black",
                 weight="bold",
             )
             plt.text(
