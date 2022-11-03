@@ -620,7 +620,10 @@ def baseline_analysis(
             test3,
         )  # .dropna would make correlation plots work better, but this shows all data
         rawdf = rawdf.reset_index(drop=True)
-        metricdf_dropped = metricdf.dropna(subset=["pce_r"])
+        try:
+            metricdf_dropped = metricdf.dropna(subset=["pce_r"])
+        except:
+            pass
 
     # chronoglical plots
     correlation_plot(
