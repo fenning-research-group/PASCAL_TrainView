@@ -671,17 +671,17 @@ def baseline_analysis(
             test3,
         )  # .dropna would make correlation plots work better, but this shows all data
         rawdf = rawdf.reset_index(drop=True)
-        if jvdir_0 != None:
-            metricdf_dropped = metricdf.dropna(subset=["pce_r"])
-            jv_exist = True
-        if jvdir_0 == None:
-            metricdf_dropped = metricdf
-            jv_exist = False
+
+        # if jvdir_0 != None:
+        metricdf_dropped = metricdf.dropna(subset=["pce_r"])
+        # if jvdir_0 == None:
+        #     metricdf_dropped = metricdf
 
     # chronoglical plots
     chrono_yvar_list_pl = ["pl_intensity_0", "pl_peakev_0", "pl_fwhm_0"]
     chrono_yvar_list_jv = [
-        "pce_f, pce_r",
+        "pce_f",
+        "pce_r",
         "ff_f",
         "ff_r",
         "voc_f",
@@ -705,7 +705,7 @@ def baseline_analysis(
             batch=batch,
             save=save,
         )
-    if jv_exist == True:
+    if jvdir_0 != None:
         for xvar in chrono_xvar_list_jv:
             for yvar in chrono_yvar_list_jv:
                 correlation_plot(
@@ -718,7 +718,7 @@ def baseline_analysis(
         correlation_matrix_jv(
             metricdf=metricdf_dropped, method="pearson", batch=batch, save=save
         )
-    if jv_exist == False:
+    if jvdir_0 == None:
         correlation_matrix(
             metricdf=metricdf_dropped, method="pearson", batch=batch, save=save
         )
