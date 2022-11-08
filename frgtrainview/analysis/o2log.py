@@ -44,6 +44,5 @@ def get_batch_o2log(outputdir):
 
     start_time = datetime.datetime.strptime(start_time, format)
     end_time = datetime.datetime.strptime(end_time, format)
-    print(start_time, end_time)
 
     return slice_o2log(start_time, end_time)
