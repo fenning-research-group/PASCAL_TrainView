@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 import glob
 import os
@@ -33,11 +33,13 @@ def slice_o2log(start_datetime, end_datetime, o2log_file=LOG_FILE):
     sliced = sliced[sliced['datetime'] <= end_datetime]
     return sliced
 
-def get_batch_o2log(outputdir):
+def get_batch_o2log(outputdir, before_time=timedelta(0), after_time=timedelta(0)):
     """Returns the slice of the o2 log that contains the data that was recorded during a batch.
 
     Args:
         outputdir (path): a path to a batch's outputdir, which contains the .log file with timestamps.
+        before_time (datetime.timedelta): a timedelta representing the amount of time to read logs prior to the start of the batch.
+        after_time (datetime.timedelta): a timedelta representing the amount of time to read logs after the end of the batch.
     
     Returns:
         pd.DataFrame: contains the rows of the o2 log that were recorded during the batch.
@@ -59,10 +61,20 @@ def get_batch_o2log(outputdir):
     # day/time is 0-padded
     format = "%m/%d/%Y %I:%M:%S %p"
 
-    start_time = ' '.join(first_line.split(' ')[:3])
-    end_time = ' '.join(last_line.split(' ')[:3])
+    batch_start_time = ' '.join(first_line.split(' ')[:3])
+    batch_end_time = ' '.join(last_line.split(' ')[:3])
 
-    start_time = datetime.datetime.strptime(start_time, format)
-    end_time = datetime.datetime.strptime(end_time, format)
+    batch_start_time = datetime.strptime(batch_start_time, format)
+    batch_end_time = datetime.strptime(batch_end_time, format)
 
-    return slice_o2log(start_time, end_time)
+    # now add the before_time and after_time
+    start_time = batch_start_time - before_time
+    end_time = batch_end_time + after_time
+
+    # get the log data
+    df = slice_o2log(start_time, end_time)
+
+    # now add column for time since start of batch
+    df['t'] = df['datetime'] - batch_start_time # normalize time relative to batch start
+    df['t'] = df['t'].apply(lambda t: t.total_seconds()) # convert to seconds
+    return df
