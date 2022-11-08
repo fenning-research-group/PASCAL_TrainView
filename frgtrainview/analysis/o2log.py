@@ -11,6 +11,16 @@ Read from the o2 arduino running log and determine batch based on times
 LOG_FILE = 'PASCAL_ENV_2022-10-31.csv'
 
 def slice_o2log(start_datetime, end_datetime, o2log_file=LOG_FILE):
+    """Slice the o2 log and returns a pandas DataFrame.
+
+    Args:
+        start_datetime (datetime): a datetime object to begin the slice.
+        end_datetime (datetime): a datetime object to end the slice.
+        o2log_file (path): a path to the o2 log file to use, if not using the default.
+    
+    Returns:
+        pd.DataFrame: contains the rows of the o2 log that are within the start and end datetimes.
+    """
     # extract the rows in the log between two times
     # structure is datetime, oxygen_ppm, humidity_ppm
     # date is in format yyyy/mm/dd hh:mm:ss (24-hour time, single digits not 0-padded)
@@ -24,6 +34,16 @@ def slice_o2log(start_datetime, end_datetime, o2log_file=LOG_FILE):
     return sliced
 
 def get_batch_o2log(outputdir):
+    """Returns the slice of the o2 log that contains the data that was recorded during a batch.
+
+    Args:
+        outputdir (path): a path to a batch's outputdir, which contains the .log file with timestamps.
+    
+    Returns:
+        pd.DataFrame: contains the rows of the o2 log that were recorded during the batch.
+        
+    """
+
     # find the .log file for timestamps of when batch started and ended
     # start time is on first row, end time is on last row
     output_logfile = glob.glob(os.path.join(outputdir, '*.log'))[0]
