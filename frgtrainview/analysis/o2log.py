@@ -33,11 +33,12 @@ def slice_o2log(start_datetime, end_datetime, o2log_file=LOG_FILE):
     sliced = sliced[sliced['datetime'] <= end_datetime]
     return sliced
 
-def get_batch_o2log(outputdir, before_time=timedelta(0), after_time=timedelta(0)):
+def get_batch_o2log(batch_outputdir, ppm_logfile, before_time=timedelta(0), after_time=timedelta(0)):
     """Returns the slice of the o2 log that contains the data that was recorded during a batch.
 
     Args:
-        outputdir (path): a path to a batch's outputdir, which contains the .log file with timestamps.
+        batch_outputdir (path): a path to a batch's outputdir, which contains the .log file with timestamps.
+        ppm_logfile (path): a path to the o2/humidity ppm log file to search in.
         before_time (datetime.timedelta): a timedelta representing the amount of time to read logs prior to the start of the batch.
         after_time (datetime.timedelta): a timedelta representing the amount of time to read logs after the end of the batch.
     
@@ -48,7 +49,7 @@ def get_batch_o2log(outputdir, before_time=timedelta(0), after_time=timedelta(0)
 
     # find the .log file for timestamps of when batch started and ended
     # start time is on first row, end time is on last row
-    output_logfile = glob.glob(os.path.join(outputdir, '*.log'))[0]
+    output_logfile = glob.glob(os.path.join(batch_outputdir, '*.log'))[0]
     
     first_line, last_line = None, None
     with open(output_logfile) as file:
@@ -72,7 +73,7 @@ def get_batch_o2log(outputdir, before_time=timedelta(0), after_time=timedelta(0)
     end_time = batch_end_time + after_time
 
     # get the log data
-    df = slice_o2log(start_time, end_time)
+    df = slice_o2log(start_time, end_time, ppm_logfile)
 
     # now add column for time since start of batch
     df['t'] = df['datetime'] - batch_start_time # normalize time relative to batch start
