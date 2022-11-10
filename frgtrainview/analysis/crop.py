@@ -56,26 +56,24 @@ def crop_pl(img, output_shape=None):
     minDistance = 90
     n_corners = 3
     quad_corners = []
-    corner_img = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
     for i in range(4):
         corners = cv2.goodFeaturesToTrack(line_img, n_corners, 0.10, minDistance=minDistance, mask=quadrant_masks[i])
+        if corners is None:
+            corners = np.zeros(0)
         corners = np.int0(corners)
-        for c in corners:
-            x,y = c.ravel()
-            cv2.circle(corner_img, (x,y), 25, (255,0,0), -1)
         quad_corners.append(corners)
-        x1,y1 = q[i][0]
-        x2,y2 = q[i][1]
-        cv2.rectangle(corner_img, (x1, y1), (x2, y2), (255,0,0), 20)
-
+        
     # find bounding box around all the corners found
     temp = []
     for x in quad_corners:
         temp.extend(x)
-    rot_rect = cv2.minAreaRect(np.array(temp, np.float32))
+    temp = np.array(temp, np.float32)
+    if temp.shape[0] > 0:
+        rot_rect = cv2.minAreaRect(temp)
+    else: # no corners found, can't crop
+        rot_rect = None
     box = cv2.boxPoints(rot_rect)
     box = np.int0(box)
-    cv2.drawContours(corner_img, [box], 0, (0,0,255), 10)
 
     # use rectangle corners to perspective transform
     # [0] = top left, [1] = top right, [2] = bottom right, [3] = bottom left
