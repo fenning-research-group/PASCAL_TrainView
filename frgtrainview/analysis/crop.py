@@ -13,6 +13,28 @@ def crop_pl(img, output_shape=None):
         Otherwise, the shape is the size of the bounding box that contains the sample in the original image img.
         ndarray: an array of length 4 representing the corners of the bounding box the sample is contained within on the original image img.
     """
+    # define the center of the image between the holder and
+    minX, maxX = (200, 1440-200)
+    minY, maxY = (0, 1080)
+
+    # create a mask representing each of 4 quadrants
+    centerX = (maxX + minX)//2
+    centerY = (maxY + minY)//2
+    q1 = ((minX, minY), (centerX, centerY))
+    q2 = ((centerX, minY), (maxX, centerY))
+    q3 = ((centerX, centerY), (maxX, maxY))
+    q4 = ((minX, centerY), (centerX, maxY))
+    q = [q1,q2,q3,q4]
+
+    quadrant_masks = []
+    for i in range(4):
+        mask = np.zeros(img.shape[:2], np.uint8)
+        x1,y1 = q[i][0]
+        x2,y2 = q[i][1]
+        mask[y1:y2, x1:x2] = 1
+        quadrant_masks.append(mask)
+
+    # now grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     thresh = cv2.inRange(gray, 250, 256) # threshold on white, the border of sample
 
@@ -30,35 +52,41 @@ def crop_pl(img, output_shape=None):
         x1, y1, x2, y2 = arr
         cv2.line(line_img, (x1, y1), (x2, y2), 255, 4)
 
-    # close in gaps to reduce noise
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (30,30))
-    filled = cv2.morphologyEx(line_img, cv2.MORPH_CLOSE, kernel, iterations=4)
-    filled = cv2.bitwise_not(filled)
+    # now find the corners
+    minDistance = 90
+    n_corners = 3
+    quad_corners = []
+    corner_img = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
+    for i in range(4):
+        corners = cv2.goodFeaturesToTrack(line_img, n_corners, 0.10, minDistance=minDistance, mask=quadrant_masks[i])
+        corners = np.int0(corners)
+        for c in corners:
+            x,y = c.ravel()
+            cv2.circle(corner_img, (x,y), 25, (255,0,0), -1)
+        quad_corners.append(corners)
+        x1,y1 = q[i][0]
+        x2,y2 = q[i][1]
+        cv2.rectangle(corner_img, (x1, y1), (x2, y2), (255,0,0), 20)
 
-    # now get the bounding box of the largest area square, which is probably the sample
-    contours, _ = cv2.findContours(filled, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    biggest_rect = None
-    biggest_area = 0
-    for c in contours:
-        # get rotated rectangle from contour
-        rot_rect = cv2.minAreaRect(c)
-        area = cv2.contourArea(c)
+    # find bounding box around all the corners found
+    temp = []
+    for x in quad_corners:
+        temp.extend(x)
+    rot_rect = cv2.minAreaRect(np.array(temp, np.float32))
+    box = cv2.boxPoints(rot_rect)
+    box = np.int0(box)
+    cv2.drawContours(corner_img, [box], 0, (0,0,255), 10)
 
-        if area > biggest_area:
-            box = cv2.boxPoints(rot_rect)
-            box = np.int0(box)
-            biggest_rect = box
-            biggest_area = area
-    
     # use rectangle corners to perspective transform
     # [0] = top left, [1] = top right, [2] = bottom right, [3] = bottom left
     if output_shape == None:
         # if output_shape is not provided, then compute it!
         # we'll just assume we want to keep the same overall size
         # this computes the sidelengths of the biggest rectangle
-        output_shape = (int(np.linalg.norm(biggest_rect[1] - biggest_rect[0])),
-                int(np.linalg.norm(biggest_rect[3] - biggest_rect[0])))
+        output_shape = (int(np.linalg.norm(box[1] - box[0])),
+                int(np.linalg.norm(box[3] - box[0])))
 
+    box = np.float32(box)
     output_pts = np.array([
         [0,0],
         [output_shape[0], 0],
@@ -66,7 +94,6 @@ def crop_pl(img, output_shape=None):
         [0, output_shape[1]],
         ], np.float32)
 
-    biggest_rect = np.float32(biggest_rect)
-    M = cv2.getPerspectiveTransform(biggest_rect, output_pts) # needs float32 arrays
+    M = cv2.getPerspectiveTransform(box, output_pts)
     out = cv2.warpPerspective(img, M, output_shape, flags=cv2.INTER_LINEAR)
-    return out, biggest_rect
+    return out, box
