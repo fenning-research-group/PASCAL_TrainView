@@ -75,21 +75,27 @@ def crop_pl(img, output_shape=None):
     box = cv2.boxPoints(rot_rect)
     box = np.int0(box)
 
+    # rearrange box so that it's oriented such that the points are: 
+    # [0] = top left, [1] = bottom left, [2] = top right, [3] = bottom right
+    #  order by distance. The top left is the lowest distance, and bottom right is the greatest distance
+    distances = np.linalg.norm(box, axis=1)
+    idx = np.argsort(distances)
+    box = box[idx]
+
     # use rectangle corners to perspective transform
-    # [0] = top left, [1] = top right, [2] = bottom right, [3] = bottom left
     if output_shape == None:
         # if output_shape is not provided, then compute it!
         # we'll just assume we want to keep the same overall size
         # this computes the sidelengths of the biggest rectangle
-        output_shape = (int(np.linalg.norm(box[1] - box[0])),
-                int(np.linalg.norm(box[3] - box[0])))
+        output_shape = (int(np.linalg.norm(box[2] - box[0])),
+                int(np.linalg.norm(box[1] - box[0])))
 
     box = np.float32(box)
     output_pts = np.array([
         [0,0],
+        [0, output_shape[1]],
         [output_shape[0], 0],
         [output_shape[0], output_shape[1]],
-        [0, output_shape[1]],
         ], np.float32)
 
     M = cv2.getPerspectiveTransform(box, output_pts)
