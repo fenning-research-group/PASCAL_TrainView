@@ -625,6 +625,7 @@ def baseline_analysis(
     logdir=str,
     jvdir=None,
     drop_low_pl=50,
+    drop_high_pl=None,
     save=True,
     metricdf=None,
     rawdf=None,
@@ -664,7 +665,11 @@ def baseline_analysis(
 
         test2, test3 = rename_duplicate_cols(test2), rename_duplicate_cols(test3)
 
-        test2 = test2[~(test2["pl_intensity_0"] <= drop_low_pl)]
+        if drop_low_pl != None:
+            test2 = test2[~(test2["pl_intensity_0"] <= drop_low_pl)]
+
+        if drop_high_pl != None:
+            test2 = test2[~(test2["pl_intensity_0"] >= drop_high_pl)]
 
         metricdf, rawdf = (
             test2,
@@ -718,7 +723,7 @@ def baseline_analysis(
         correlation_matrix_jv(
             metricdf=metricdf_dropped, method="pearson", batch=batch, save=save
         )
-    if jvdir_0 == None:
+    if jv_exist == False:
         correlation_matrix(
             metricdf=metricdf_dropped, method="pearson", batch=batch, save=save
         )
