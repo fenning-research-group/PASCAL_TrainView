@@ -625,6 +625,7 @@ def baseline_analysis(
     logdir=str,
     jvdir=None,
     drop_low_pl=50,
+    drop_high_pl=None,
     save=True,
     metricdf=None,
     rawdf=None,
@@ -666,16 +667,20 @@ def baseline_analysis(
 
         test2 = test2[~(test2["pl_intensity_0"] <= drop_low_pl)]
 
+        if drop_low_pl != None:
+            test2 = test2[~(test2["pl_intensity_0"] <= drop_low_pl)]
+            test3 = test3[~(test3["pl_intensity_0"] <= drop_low_pl)]
+        if drop_high_pl != None:
+            test2 = test2[~(test2["pl_intensity_0"] >= drop_high_pl)]
+            test3 = test3[~(test3["pl_intensity_0"] >= drop_high_pl)]
         metricdf, rawdf = (
             test2,
             test3,
         )  # .dropna would make correlation plots work better, but this shows all data
         rawdf = rawdf.reset_index(drop=True)
 
-        # if jvdir_0 != None:
-        metricdf_dropped = metricdf.dropna(subset=["pce_r"])
-        # if jvdir_0 == None:
-        #     metricdf_dropped = metricdf
+        if jvdir_0 != None:
+            metricdf_dropped = metricdf.dropna(subset=["pce_r"])
 
     # chronoglical plots
     chrono_yvar_list_pl = ["pl_intensity_0", "pl_peakev_0", "pl_fwhm_0"]
@@ -697,14 +702,15 @@ def baseline_analysis(
     ]
     chrono_xvar_list_jv = ["pl_intensity_0", "pl_peakev_0", "pl_fwhm_0"]
 
-    for yvar in chrono_yvar_list_pl:
-        correlation_plot(
-            metricdf=metricdf_dropped,
-            x_col="spincoat0",
-            y_col=yvar,
-            batch=batch,
-            save=save,
-        )
+    if jvdir_0 == None:
+        for yvar in chrono_yvar_list_pl:
+            correlation_plot(
+                metricdf=metricdf,
+                x_col="spincoat0",
+                y_col=yvar,
+                batch=batch,
+                save=save,
+            )
     if jvdir_0 != None:
         for xvar in chrono_xvar_list_jv:
             for yvar in chrono_yvar_list_jv:
@@ -719,9 +725,7 @@ def baseline_analysis(
             metricdf=metricdf_dropped, method="pearson", batch=batch, save=save
         )
     if jvdir_0 == None:
-        correlation_matrix(
-            metricdf=metricdf_dropped, method="pearson", batch=batch, save=save
-        )
+        correlation_matrix(metricdf=metricdf, method="pearson", batch=batch, save=save)
     plot_df(rawdf, batch=batch, save=save)
     plot_bf(rawdf, batch=batch, save=save)
     plot_pl(rawdf, batch=batch, save=save)
