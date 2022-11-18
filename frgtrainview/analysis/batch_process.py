@@ -711,7 +711,7 @@ def baseline_analysis(
         "i_factor_r",
         "i_factor_f",
     ]
-    chrono_xvar_list_jv = ["pl_intensity_0", "pl_peakev_0", "pl_fwhm_0"]
+    chrono_xvar_list_jv = ["spincoat0", "pl_intensity_0", "pl_peakev_0", "pl_fwhm_0"]
 
     if jvdir_0 == None:
         for yvar in chrono_yvar_list_pl:
@@ -723,6 +723,14 @@ def baseline_analysis(
                 save=save,
             )
     if jvdir_0 != None:
+        for yvar in chrono_yvar_list_pl:
+            correlation_plot(
+                metricdf=metricdf,
+                x_col="spincoat0",
+                y_col=yvar,
+                batch=batch,
+                save=save,
+            )
         for xvar in chrono_xvar_list_jv:
             for yvar in chrono_yvar_list_jv:
                 try:
