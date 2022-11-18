@@ -119,8 +119,15 @@ def correlation_plot(metricdf, x_col=str, y_col=str, batch=str, save=True):
     batch = batch
     metricdf = metricdf
     fig, ax = plt.subplots()
+
     x = metricdf[x_col].astype(float)
     y = metricdf[y_col].astype(float)
+
+    # in case any nan values made it through
+    x = x[~np.isnan(x)]
+    y = y[~np.isnan(y)]
+
+    x_len = len(x)
     sns.scatterplot(x=x, y=y, ax=ax, color="black", alpha=1, legend=None)
     sns.kdeplot(
         x=x, y=y, cmap="Greys_r", shade=True, bw_method="scott", ax=ax, alpha=0.2
@@ -133,7 +140,7 @@ def correlation_plot(metricdf, x_col=str, y_col=str, batch=str, save=True):
     plt.text(
         0.01,
         0.95,
-        s=(f"R$^2$:{rsq:.2f}"),
+        s=(f" R$^2$:{rsq:.2f}\n N:{x_len}"),
         horizontalalignment="left",
         verticalalignment="top",
         transform=ax.transAxes,
@@ -676,7 +683,7 @@ def baseline_analysis(
         metricdf, rawdf = (
             test2,
             test3,
-        )  # .dropna would make correlation plots work better, but this shows all data
+        )
         rawdf = rawdf.reset_index(drop=True)
 
         if jvdir_0 != None:
