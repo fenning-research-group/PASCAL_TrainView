@@ -699,7 +699,8 @@ def baseline_analysis(
         "rsh_r",
         "rch_f",
         "rch_r",
-        "i_factor",
+        "i_factor_r",
+        "i_factor_f",
     ]
     chrono_xvar_list_jv = ["pl_intensity_0", "pl_peakev_0", "pl_fwhm_0"]
 
