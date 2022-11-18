@@ -636,12 +636,12 @@ def baseline_analysis(
     jvdir_0 = jvdir
     save = save
     batch = batch
-
-    TodaysDate = time.strftime("%Y%m%d")
-    fp = "{}_{}_analysis".format(TodaysDate, batch)
-    if not os.path.exists(fp):
-        os.mkdir(fp)
-    os.chdir(fp)
+    if save == True:
+        TodaysDate = time.strftime("%Y%m%d")
+        fp = "{}_{}_analysis".format(TodaysDate, batch)
+        if not os.path.exists(fp):
+            os.mkdir(fp)
+        os.chdir(fp)
 
     if metricdf is None:
         paramdf_0 = pd.read_csv(paramdir_0)
@@ -733,7 +733,8 @@ def baseline_analysis(
     plot_df(rawdf, batch=batch, save=save)
     plot_bf(rawdf, batch=batch, save=save)
     plot_pl(rawdf, batch=batch, save=save)
-    os.chdir("..")
+    if save == True:
+        os.chdir("..")
     return metricdf, rawdf
 
 
