@@ -120,14 +120,16 @@ def correlation_plot(metricdf, x_col=str, y_col=str, batch=str, save=True):
     metricdf = metricdf
     fig, ax = plt.subplots()
 
-    x = metricdf[x_col].astype(float)
-    y = metricdf[y_col].astype(float)
-
-    # in case any nan values made it through
-    x = x[~np.isnan(x)]
-    y = y[~np.isnan(y)]
-
+    x_name = x_col
+    y_name = y_col
+    x = metricdf[x_name]
+    y = metricdf[y_name]
+    xy = pd.concat([x, y], axis=1)
+    xy = xy.dropna()
+    x = xy[x_name].astype(float)
+    y = xy[y_name].astype(float)
     x_len = len(x)
+
     sns.scatterplot(x=x, y=y, ax=ax, color="black", alpha=1, legend=None)
     sns.kdeplot(
         x=x, y=y, cmap="Greys_r", shade=True, bw_method="scott", ax=ax, alpha=0.2
