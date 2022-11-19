@@ -756,4 +756,169 @@ def baseline_analysis(
     return metricdf, rawdf
 
 
-##
+def plot_hist(
+    data,
+    x_var,
+    hue_var,
+    y_var,
+    pce_lim=None,
+    ff_lim=None,
+    voc_lim=None,
+    jsc_lim=None,
+    rsh_lim=None,
+    rs_lim=None,
+    rch_lim=None,
+    i_factor_lim=None,
+    pl_intensity_lim=None,
+    pl_fwhm_lim=None,
+    pl_peakev_lim=None,
+    psk_peak_lim=None,
+    pskpbi2_ratio_lim=None,
+):
+    warnings.filterwarnings("ignore")
+
+    horiz = len(y_var_list)
+    vert = len(x_var_list)
+    embiggen = 4
+    color_list_subset = ["red", "blue", "green"]
+
+    fig, ax = plt.subplots(
+        vert,
+        horiz,
+        figsize=(horiz * embiggen, vert * embiggen),
+        constrained_layout=True,
+    )
+
+    for k in range(vert):
+        for n in range(horiz):
+            y_var = y_var_list[n]
+
+            x_var = x_var_list[k]
+            hue_var = hue_var_list[k]
+
+            ax[k, n] = sns.boxplot(
+                x=x_var,
+                y=y_var,
+                hue=hue_var,
+                data=data,
+                palette="Set1",
+                width=0.5,
+                showfliers=False,
+                ax=ax[k, n],
+            )
+            ax[k, n].get_legend().remove()
+            ax[k, n].legend(
+                title=hue_var,
+                labels=sorted(data[hue_var].unique()),
+                labelcolor=color_list_subset,
+            )
+
+            ax[k, n] = sns.stripplot(
+                x=x_var,
+                y=y_var,
+                hue=hue_var,
+                data=data,
+                palette="Set1",
+                dodge=True,
+                edgecolor="black",
+                linewidth=0.5,
+                size=3,
+                ax=ax[k, n],
+            )
+            ax[k, n].get_legend().remove()
+            ax[k, n].legend(
+                title=hue_var,
+                labels=sorted(data[hue_var].unique()),
+                labelcolor=color_list_subset,
+            )
+
+            if x_var == "all":
+                ax[k, n].set_xlabel("")
+
+            if y_var == "pce" or y_var == "pce_f" or y_var == "pce_r":
+                y_axis_label = "Power Conversion Effiency %"
+                ax[k, n].set_ylabel(y_axis_label)
+                if pce_lim:
+                    ax[k, n].set(ylim=(pce_lim[0], pce_lim[1]))
+
+            if y_var == "jsc" or y_var == "jsc_f" or y_var == "jsc_r":
+                y_axis_label = "J$_{SC}$ mA/cm$^2$"
+                ax[k, n].set_ylabel(y_axis_label)
+                if jsc_lim:
+                    ax[k, n].set(ylim=(jsc_lim[0], jsc_lim[1]))
+
+            if y_var == "voc" or y_var == "voc_f" or y_var == "voc_r":
+                y_axis_label = "V$_{OC}$ mV"
+                ax[k, n].set_ylabel(y_axis_label)
+                if voc_lim:
+                    ax[k, n].set(ylim=(voc_lim[0], voc_lim[1]))
+
+            if y_var == "ff" or y_var == "ff_f" or y_var == "ff_r":
+                y_axis_label = "Fill Factor %"
+                ax[k, n].set_ylabel(y_axis_label)
+                if ff_lim:
+                    ax[k, n].set(ylim=(ff_lim[0], ff_lim[1]))
+
+            if y_var == "rsh" or y_var == "rsh_f" or y_var == "rsh_r":
+                y_axis_label = "Shunt Resistance Ωcm$^2$"
+                ax[k, n].set_ylabel(y_axis_label)
+                if rsh_lim:
+                    ax[k, n].set(ylim=(rsh_lim[0], rsh_lim[1]))
+
+            if y_var == "rs" or y_var == "rs_f" or y_var == "rs_r":
+                y_axis_label = "Series Resistance Ωcm$^2$"
+                ax[k, n].set_ylabel(y_axis_label)
+                if rs_lim:
+                    ax[k, n].set(ylim=(rs_lim[0], rs_lim[1]))
+
+            if y_var == "rch" or y_var == "rch_f" or y_var == "rch_r":
+                y_axis_label = "Characteristic Resistance Ωcm$^2$"
+                ax[k, n].set_ylabel(y_axis_label)
+                if rch_lim:
+                    ax[k, n].set(ylim=(rch_lim[0], rch_lim[1]))
+
+            if y_var == "i_factor" or y_var == "i_factor_f" or y_var == "i_factor_r":
+                y_axis_label = "Ideality Factor"
+
+                ax[k, n].set_ylabel(y_axis_label)
+                if i_factor_lim:
+                    ax[k, n].set(ylim=(i_factor_lim[0], i_factor_lim[1]))
+
+            if y_var == "pl_intensity_0":
+                y_axis_label = "PL Intensity (counts/second)"
+                ax[k, n].set_ylabel(y_axis_label)
+                if pl_intensity_lim:
+                    ax[k, n].set(ylim=(pl_intensity_lim[0], pl_intensity_lim[1]))
+
+            if y_var == "pl_fwhm_0":
+                y_axis_label = "PL FWHM (eV)"
+                ax[k, n].set_ylabel(y_axis_label)
+                if pl_fwhm_lim:
+                    ax[k, n].set(ylim=(pl_fwhm_lim[0], pl_fwhm_lim[1]))
+
+            if y_var == "pl_peakev_0":
+                y_axis_label = "PL Peak Energy (eV)"
+                ax[k, n].set_ylabel(y_axis_label)
+                if pl_peakev_lim:
+                    ax[k, n].set(ylim=(pl_peakev_lim[0], pl_peakev_lim[1]))
+
+            if y_var == "pl_peakev_0":
+                y_axis_label = "PL Peak Energy (eV)"
+                ax[k, n].set_ylabel(y_axis_label)
+                if pl_peakev_lim:
+                    ax[k, n].set(ylim=(pl_peakev_lim[0], pl_peakev_lim[1]))
+
+            if y_var == "psk_peak_intensity":
+                y_axis_label = "Perovskite <100> Intensity (counts)"
+                ax[k, n].set_ylabel(y_axis_label)
+                if psk_peak_lim:
+                    ax[k, n].set(ylim=(psk_peak_lim[0], psk_peak_lim[1]))
+
+            if y_var == "psk_to_pbi2":
+                y_axis_label = "Perovskite <100>:PbI$_2$ <100> Ratio"
+                ax[k, n].set_ylabel(y_axis_label)
+                if psk_peak_lim:
+                    ax[k, n].set(ylim=(pskpbi2_ratio_lim[0], pskpbi2_ratio_lim[1]))
+
+    warnings.filterwarnings("default")
+    plt.show()
