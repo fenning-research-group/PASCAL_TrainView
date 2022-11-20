@@ -758,9 +758,9 @@ def baseline_analysis(
 
 def plot_hist(
     data,
-    x_var,
-    hue_var,
-    y_var,
+    x_var_list,
+    hue_var_list,
+    y_var_list,
     pce_lim=None,
     ff_lim=None,
     voc_lim=None,
