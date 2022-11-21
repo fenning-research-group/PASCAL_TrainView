@@ -1,5 +1,7 @@
 from frgpascal.analysis.processing import load_all, compress_jv, get_worklist_times
 from frgtrainview.analysis import crop
+import scipy
+from scipy.interpolate import griddata
 from scipy import stats
 from natsort import natsorted
 from natsort import index_natsorted
@@ -19,6 +21,7 @@ import os
 import json
 import pickle as pkl
 import time
+
 
 # plotting settings
 # %config InlineBackend.figure_format = 'retina'
