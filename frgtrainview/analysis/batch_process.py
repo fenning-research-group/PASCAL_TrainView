@@ -927,13 +927,24 @@ def plot_hist(
     plt.show()
 
 
+data = df_metric_all
+
+
 def plot_heatmaps(
-    data, metric_display_choice, metric_var_list, round_val=2, map_method="cubic"
+    data,
+    metric_display_choice,
+    metric_var_list,
+    x_var_list,
+    y_var_list,
+    round_val=2,
+    map_method="cubic",
+    show_device_count=False,
 ):
     if metric_display_choice == "median":
         z_var_list = [x + "_median" for x in metric_var_list]
 
     std_var_list = [x + "_std" for x in metric_var_list]
+    device_count_list = ["device_count"]
 
     # fig, ax = plt.subplots(figsize=(4,4))
     # objs = ['literallyanything' for i in range(1)]
@@ -954,11 +965,13 @@ def plot_heatmaps(
             y_name = y_var_list[k]
             z_name = z_var_list[n]
             std_name = std_var_list[n]
+            count_name = device_count_list[0]
 
             x = data[x_name]
             y = data[y_name]
             z = data[z_name]
             z_std = data[std_name]
+            z_count = data[count_name]
 
             # median
             xy = pd.concat([x, y], axis=1)
@@ -974,14 +987,27 @@ def plot_heatmaps(
             grid = np.meshgrid(x_grid, y_grid)
             data_subset = np.stack((x, y), axis=-1)
             z_array = np.array(z)
-            map = scipy.interpolate.griddata(
-                data_subset,
-                z_array,
-                (grid[0], grid[1]),
-                method=map_method,
-                rescale=False,
-                fill_value=np.nan,
-            )
+
+            if map_method == "direct":
+                map = np.zeros(grid[0].shape) * np.nan
+                for q in range(len(data_subset)):
+                    x_coord, y_coord = np.where(
+                        (grid[0] == data_subset[q][0]) * (grid[1] == data_subset[q][1])
+                        == True
+                    )
+                    if np.isnan(map[x_coord, y_coord]):
+                        map[x_coord, y_coord] = z_array[q]
+
+            if map_method != "direct":
+                map = scipy.interpolate.griddata(
+                    data_subset,
+                    z_array,
+                    (grid[0], grid[1]),
+                    method=map_method,
+                    rescale=False,
+                    fill_value=np.nan,
+                )
+
             labels = map.round(round_val).astype(str).astype(object)
 
             # std
@@ -996,19 +1022,70 @@ def plot_heatmaps(
             data_subset_std = np.stack((x_std, y_std), axis=-1)
             z_array_std = np.array(z_std)
             try:
-                map_std = scipy.interpolate.griddata(
-                    data_subset_std,
-                    z_array_std,
-                    (grid[0], grid[1]),
-                    method=map_method,
-                    rescale=False,
-                    fill_value=np.nan,
-                )
-                labels_std = map_std.round(round_val).astype(str).astype(object)
+                if map_method == "direct":
+                    map_std = np.zeros(grid[0].shape) * np.nan
+                    for q in range(len(data_subset_std)):
+                        x_coord, y_coord = np.where(
+                            (grid[0] == data_subset_std[q][0])
+                            * (grid[1] == data_subset_std[q][1])
+                            == True
+                        )
+                        map_std[x_coord, y_coord] = z_array_std[q]
+                if map_method != "direct":
+                    map_std = scipy.interpolate.griddata(
+                        data_subset_std,
+                        z_array_std,
+                        (grid[0], grid[1]),
+                        method=map_method,
+                        rescale=False,
+                        fill_value=np.nan,
+                    )
             except:
                 map_std = np.empty(map.shape)
                 map_std[:] = np.nan
-                labels_std = map_std.round(round_val).astype(str).astype(object)
+
+            labels_std = map_std.round(round_val).astype(str).astype(object)
+
+            # count
+            xy_count = pd.concat([x, y], axis=1)
+            xycount = pd.concat([xy_count, z_count], axis=1)
+            xycount = xycount.dropna()
+            x_count = xycount[x_name].astype(float)
+            y_count = xycount[y_name].astype(float)
+            z_count = xycount[count_name].astype(float)
+            x_len = len(x)
+
+            data_subset_count = np.stack((x_count, y_count), axis=-1)
+            z_array_count = np.array(z_count)
+            try:
+                if map_method == "direct":
+                    map_count = np.zeros(grid[0].shape) * np.nan
+                    for q in range(len(data_subset)):
+                        x_coord, y_coord = np.where(
+                            (grid[0] == data_subset_count[q][0])
+                            * (grid[1] == data_subset_count[q][1])
+                            == True
+                        )
+                        if np.isnan(map_count[x_coord, y_coord]):
+                            map_count[x_coord, y_coord] = z_array_count[q]
+                        else:
+                            map_count[x_coord, y_coord] = (
+                                map_count[x_coord, y_coord] + z_array_count[q]
+                            )
+                if map_method != "direct":
+                    map_count = scipy.interpolate.griddata(
+                        data_subset_count,
+                        z_array_count,
+                        (grid[0], grid[1]),
+                        method=map_method,
+                        rescale=False,
+                        fill_value=np.nan,
+                    )
+                labels_count = map_count.round(round_val).astype(str).astype(object)
+            except:
+                map_count = np.empty(map.shape)
+                map_count[:] = np.nan
+                labels_count = map_count.round(round_val).astype(str).astype(object)
 
             cm1 = mpl.cm.get_cmap("coolwarm")  # divering color
             cm2 = mpl.cm.get_cmap("viridis")  # linear color
@@ -1018,13 +1095,25 @@ def plot_heatmaps(
 
             cmap_choice = cm2
 
-            label_median_and_std = labels + "\n" + labels_std
+            if show_device_count == True:
+                label_median_std_count = (
+                    "M:"
+                    + labels
+                    + "\n"
+                    + "σ:"
+                    + labels_std
+                    + "\n"
+                    + "N:"
+                    + labels_count
+                )
+            if show_device_count == False:
+                label_median_std_count = "M:" + labels + "\n" + "σ:" + labels_std
             im = sns.heatmap(
                 map,
                 cmap="viridis",
                 vmin=np.nanmin(map),
                 vmax=np.nanmax(map),
-                annot=label_median_and_std,
+                annot=label_median_std_count,
                 cbar=True,
                 ax=ax[k, n],
                 fmt="",
