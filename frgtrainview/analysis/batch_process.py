@@ -922,3 +922,123 @@ def plot_hist(
 
     warnings.filterwarnings("default")
     plt.show()
+
+
+def plot_heatmaps(
+    data, metric_display_choice, metric_var_list, round_val=2, map_method="cubic"
+):
+    if metric_display_choice == "median":
+        z_var_list = [x + "_median" for x in metric_var_list]
+
+    std_var_list = [x + "_std" for x in metric_var_list]
+
+    # fig, ax = plt.subplots(figsize=(4,4))
+    # objs = ['literallyanything' for i in range(1)]
+    warnings.filterwarnings("ignore")
+    horiz = len(z_var_list)
+    vert = 2
+    embiggen = 3
+    fig, ax = plt.subplots(
+        vert,
+        horiz,
+        figsize=(horiz * embiggen, vert * embiggen),
+        constrained_layout=True,
+    )
+    for k in range(vert):
+        for n in range((horiz)):
+
+            x_name = x_var_list[k]
+            y_name = y_var_list[k]
+            z_name = z_var_list[n]
+            std_name = std_var_list[n]
+
+            x = data[x_name]
+            y = data[y_name]
+            z = data[z_name]
+            z_std = data[std_name]
+
+            # median
+            xy = pd.concat([x, y], axis=1)
+            xyz = pd.concat([xy, z], axis=1)
+            xyz = xyz.dropna()
+            x = xyz[x_name].astype(float)
+            y = xyz[y_name].astype(float)
+            z = xyz[z_name].astype(float)
+            x_len = len(x)
+            x_grid = sorted(df_metric_all[x_var_list[k]].unique())
+            y_grid = sorted(df_metric_all[y_var_list[k]].unique())
+            X_grid, Y_grid = np.meshgrid(x_grid, y_grid)
+            grid = np.meshgrid(x_grid, y_grid)
+            data_subset = np.stack((x, y), axis=-1)
+            z_array = np.array(z)
+            map = scipy.interpolate.griddata(
+                data_subset,
+                z_array,
+                (grid[0], grid[1]),
+                method=map_method,
+                rescale=False,
+                fill_value=np.nan,
+            )
+            labels = map.round(round_val).astype(str).astype(object)
+
+            # std
+            xy_std = pd.concat([x, y], axis=1)
+            xystd = pd.concat([xy_std, z_std], axis=1)
+            xystd = xystd.dropna()
+            x_std = xystd[x_name].astype(float)
+            y_std = xystd[y_name].astype(float)
+            z_std = xystd[std_name].astype(float)
+            x_len = len(x)
+
+            data_subset_std = np.stack((x_std, y_std), axis=-1)
+            z_array_std = np.array(z_std)
+            try:
+                map_std = scipy.interpolate.griddata(
+                    data_subset_std,
+                    z_array_std,
+                    (grid[0], grid[1]),
+                    method=map_method,
+                    rescale=False,
+                    fill_value=np.nan,
+                )
+                labels_std = map_std.round(round_val).astype(str).astype(object)
+            except:
+                map_std = np.empty(map.shape)
+                map_std[:] = np.nan
+                labels_std = map_std.round(round_val).astype(str).astype(object)
+
+            cm1 = mpl.cm.get_cmap("coolwarm")  # divering color
+            cm2 = mpl.cm.get_cmap("viridis")  # linear color
+
+            cm1.set_bad(color="black")  # sets color of missing data
+            cm2.set_bad(color="grey")  # sets color of missing data
+
+            cmap_choice = cm2
+
+            label_median_and_std = labels + "\n" + labels_std
+            im = sns.heatmap(
+                map,
+                cmap="viridis",
+                vmin=np.nanmin(map),
+                vmax=np.nanmax(map),
+                annot=label_median_and_std,
+                cbar=True,
+                ax=ax[k, n],
+                fmt="",
+                cbar_kws={"label": f"{z_name}", "aspect": 100},
+                annot_kws={"size": 6},
+            )
+
+            # objs[0]= plt.colorbar(im, ax = ax, label = f'pce_r', fraction = 0.046)
+
+            ax[k, n].set_xticks(np.linspace(0.5, 2.5, 3))
+            ax[k, n].set_xticklabels(x_grid)
+
+            ax[k, n].set_yticks(np.linspace(0.5, 2.5, 3))
+            ax[k, n].set_yticklabels(np.array(y_grid))
+
+            ax[k, n].set_xlabel(x_var_list[k])
+            ax[k, n].set_ylabel(y_var_list[k])
+    warnings.filterwarnings("default")
+
+    plt.show()
