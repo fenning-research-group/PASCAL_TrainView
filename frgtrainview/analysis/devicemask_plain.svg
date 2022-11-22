@@ -26,9 +26,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="22.847996"
-     inkscape:cx="16.566004"
-     inkscape:cy="15.187328"
+     inkscape:zoom="16.155973"
+     inkscape:cx="13.091134"
+     inkscape:cy="14.97898"
      inkscape:window-width="1920"
      inkscape:window-height="1051"
      inkscape:window-x="0"
@@ -54,7 +54,7 @@
        inkscape:label="mask"
        transform="translate(0.70627733,1.4595237)">
       <g
-         id="g25074"
+         id="active_area"
          inkscape:label="active_area">
         <path
            d="m 48.29191,100.83104 h 4.15925"
@@ -86,7 +86,7 @@
            style="display:inline" />
       </g>
       <g
-         id="g25256"
+         id="connector"
          inkscape:label="connector">
         <path
            d="m 49.591014,95.113393 h 1.561042"
@@ -108,7 +108,7 @@
            id="path7068" />
       </g>
       <g
-         id="g25065"
+         id="pad"
          inkscape:label="pad">
         <path
            d="M 45.693702,95.113393 H 56.192368"
