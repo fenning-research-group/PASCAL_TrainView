@@ -27,15 +27,15 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="11.423998"
-     inkscape:cx="25.910369"
-     inkscape:cy="15.4937"
-     inkscape:window-width="1280"
-     inkscape:window-height="691"
-     inkscape:window-x="454"
-     inkscape:window-y="334"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="layer3">
+     inkscape:zoom="22.847996"
+     inkscape:cx="16.566004"
+     inkscape:cy="15.187328"
+     inkscape:window-width="1920"
+     inkscape:window-height="1051"
+     inkscape:window-x="0"
+     inkscape:window-y="140"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2">
     <inkscape:grid
        type="xygrid"
        id="grid11901"
@@ -977,78 +977,91 @@
        id="g12184"
        inkscape:label="mask"
        transform="translate(0.70627733,1.4595237)">
-      <path
-         d="m 48.29191,100.83104 h 4.15925"
-         fill="none"
-         stroke="#000000"
-         stroke-width="0.132292"
-         id="path7056" />
-      <path
-         d="M 52.45116,100.83104 V 96.674435 Z"
-         fill="none"
-         stroke="#000000"
-         stroke-width="0.132292"
-         id="path7058" />
-      <path
-         d="M 52.45116,96.674435 H 48.29191"
-         fill="none"
-         stroke="#000000"
-         stroke-width="0.132292"
-         id="path7060" />
-      <path
-         d="m 48.29191,96.674435 v 4.156605 z"
-         fill="none"
-         stroke="#000000"
-         stroke-width="0.132292"
-         id="path7062" />
-      <path
-         d="m 49.591014,95.113393 h 1.561042"
-         fill="none"
-         stroke="#000000"
-         stroke-width="0.132292"
-         id="path7064" />
-      <path
-         d="m 49.591014,95.113393 v 1.561042 z"
-         fill="none"
-         stroke="#000000"
-         stroke-width="0.132292"
-         id="path7066" />
-      <path
-         d="m 51.152056,95.113393 v 1.561042 z"
-         fill="none"
-         stroke="#000000"
-         stroke-width="0.132292"
-         id="path7068" />
-      <path
-         d="M 45.693702,95.113393 H 56.192368"
-         fill="none"
-         stroke="#000000"
-         stroke-width="0.132292"
-         id="path7070" />
-      <path
-         d="M 45.693702,95.113393 V 93.554997 Z"
-         fill="none"
-         stroke="#000000"
-         stroke-width="0.132292"
-         id="path7918" />
-      <path
-         d="M 45.693702,93.554997 H 56.192368"
-         fill="none"
-         stroke="#000000"
-         stroke-width="0.132292"
-         id="path7920" />
-      <path
-         d="m 56.192368,93.554997 v 1.558396 z"
-         fill="none"
-         stroke="#000000"
-         stroke-width="0.132292"
-         id="path7922"
-         inkscape:label="path7922" />
+      <g
+         id="g25074"
+         inkscape:label="device">
+        <path
+           d="m 48.29191,100.83104 h 4.15925"
+           fill="none"
+           stroke="#000000"
+           stroke-width="0.132292"
+           id="path7056"
+           style="display:inline" />
+        <path
+           d="M 52.45116,100.83104 V 96.674435 Z"
+           fill="none"
+           stroke="#000000"
+           stroke-width="0.132292"
+           id="path7058"
+           style="display:inline" />
+        <path
+           d="M 52.45116,96.674435 H 48.29191"
+           fill="none"
+           stroke="#000000"
+           stroke-width="0.132292"
+           id="path7060"
+           style="display:inline" />
+        <path
+           d="m 48.29191,96.674435 v 4.156605 z"
+           fill="none"
+           stroke="#000000"
+           stroke-width="0.132292"
+           id="path7062"
+           style="display:inline" />
+        <path
+           d="m 49.591014,95.113393 h 1.561042"
+           fill="none"
+           stroke="#000000"
+           stroke-width="0.132292"
+           id="path7064" />
+        <path
+           d="m 49.591014,95.113393 v 1.561042 z"
+           fill="none"
+           stroke="#000000"
+           stroke-width="0.132292"
+           id="path7066" />
+        <path
+           d="m 51.152056,95.113393 v 1.561042 z"
+           fill="none"
+           stroke="#000000"
+           stroke-width="0.132292"
+           id="path7068" />
+      </g>
+      <g
+         id="g25065"
+         inkscape:label="scribe">
+        <path
+           d="M 45.693702,95.113393 H 56.192368"
+           fill="none"
+           stroke="#000000"
+           stroke-width="0.132292"
+           id="path7070" />
+        <path
+           d="M 45.693702,95.113393 V 93.554997 Z"
+           fill="none"
+           stroke="#000000"
+           stroke-width="0.132292"
+           id="path7918" />
+        <path
+           d="M 45.693702,93.554997 H 56.192368"
+           fill="none"
+           stroke="#000000"
+           stroke-width="0.132292"
+           id="path7920" />
+        <path
+           d="m 56.192368,93.554997 v 1.558396 z"
+           fill="none"
+           stroke="#000000"
+           stroke-width="0.132292"
+           id="path7922"
+           inkscape:label="path7922" />
+      </g>
     </g>
     <g
        inkscape:groupmode="layer"
        id="layer3"
-       inkscape:label="boundingbox">
+       inkscape:label="boundingbox"
+       style="display:none">
       <rect
          style="fill:none;stroke:#000000;stroke-width:0.100492;stroke-dasharray:0.200985, 0.100492;stroke-dashoffset:0;stroke-opacity:1"
          id="rect21051"
