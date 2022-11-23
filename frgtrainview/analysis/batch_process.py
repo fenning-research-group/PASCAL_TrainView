@@ -927,9 +927,6 @@ def plot_hist(
     plt.show()
 
 
-data = df_metric_all
-
-
 def plot_heatmaps(
     data,
     metric_display_choice,
