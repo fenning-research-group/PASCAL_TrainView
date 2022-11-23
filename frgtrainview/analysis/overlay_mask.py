@@ -7,6 +7,19 @@ from io import BytesIO
 import os
 
 def overlay_mask(img, mask_svg, coords=None):
+    """Overlay the device mask over a sample characterization image.
+
+    Args:
+        img (ndarray): the characterization image for a sample.
+        mask_svg (pathlike or string): pass in a path to the svg file that contains the device mask.
+            Alternatively, pass in a string that represents an svg figure (such as returned by extract_mask_region).
+        coords (ndarray): optional, an array of length 4 representing the corners of the bounding box the sample is contained within on the original image img.
+            This can be obtained from the crop functions.
+            If no value is passed, then the mask will simply be stretched over the entire img.
+    
+    Returns:
+        ndarray: the characterization image img, but with the mask described by mask_svg overlaid on top.
+    """
     # superimpose the device mask on top of the wafer
     # TODO: orient the device mask to fit with scribe
     
