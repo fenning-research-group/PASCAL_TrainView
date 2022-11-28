@@ -778,7 +778,11 @@ def plot_hist(
     psk_peak_lim=None,
     pskpbi2_ratio_lim=None,
 ):
-    warnings.filterwarnings("ignore")
+
+    # data = data
+    data["all"] = "all"
+    if x_var_list == None:
+        x_var_list = ["all"]
 
     horiz = len(y_var_list)
     vert = len(x_var_list)
