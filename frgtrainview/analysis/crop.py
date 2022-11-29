@@ -33,9 +33,11 @@ def crop_pl(img, output_shape=None):
     gray = cv2.cvtColor(sharpened, cv2.COLOR_RGB2GRAY)
     thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 31, -1)
 
-    # find contours        
-    contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
+    # crop image so only section between holders is visible
+    # then find contours of the cropped image
+    cropped = thresh[minY:maxY, minX:maxX]
+    contours, _ = cv2.findContours(cropped, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    
     # now get the bounding box of the largest area square, which is probably the sample
     biggest_rect = None
     biggest_area = 0
@@ -49,6 +51,9 @@ def crop_pl(img, output_shape=None):
             box = np.int0(box)
             biggest_rect = box
             biggest_area = area
+    # transform the rectangle back to uncropped coordinates
+    biggest_rect[:, 0] += minX
+    biggest_rect[:, 1] += minY
 
     output_shape = (255,255)
     box = np.float32(biggest_rect)
