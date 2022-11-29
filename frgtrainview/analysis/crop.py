@@ -33,11 +33,30 @@ def crop_pl(img, output_shape=None):
     gray = cv2.cvtColor(sharpened, cv2.COLOR_RGB2GRAY)
     thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 31, -1)
 
+    # do morphological ops to clean up noise
+    morphed = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel=np.ones((3,3), np.uint8), iterations=4)
+    morphed = cv2.morphologyEx(morphed, cv2.MORPH_DILATE, kernel=np.ones((5,5), np.uint8))
+
     # crop image so only section between holders is visible
+    cropped = morphed[minY:maxY, minX:maxX]
+
+    # use houghline transform to clean up and create border
+    minLineLength = cropped.shape[0]*0.2
+    maxLineGap = 20
+    lines = cv2.HoughLinesP(cropped, 1, np.pi/180, 100, minLineLength=minLineLength, maxLineGap=maxLineGap)
+    if lines is None:
+        lines = np.zeros(0)
+
+    # now draw the lines
+    line_img = np.zeros_like(cropped, np.uint8)
+    for r_theta in lines:
+        arr = np.array(r_theta[0], dtype=np.int32)
+        x1, y1, x2, y2 = arr
+        cv2.line(line_img, (x1, y1), (x2, y2), 255, 4)
+
     # then find contours of the cropped image
-    cropped = thresh[minY:maxY, minX:maxX]
-    contours, _ = cv2.findContours(cropped, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    
+    contours, _ = cv2.findContours(line_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
     # now get the bounding box of the largest area square, which is probably the sample
     biggest_rect = None
     biggest_area = 0
