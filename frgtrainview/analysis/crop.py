@@ -13,6 +13,11 @@ def crop_pl(img, output_shape=None):
         Otherwise, the shape is the size of the bounding box that contains the sample in the original image img.
         ndarray: an array of length 4 representing the corners of the bounding box the sample is contained within on the original image img.
     """
+    return _crop_pl_adaptive(img, output_shape=output_shape)
+
+def _crop_pl_adaptive(img, output_shape=None):
+    """Helper func. Don't use this directly.
+    Uses adaptive thresholding to crop PL image."""
     # define the center of the image between the holder and
     minX, maxX = (200, 1440-200)
     minY, maxY = (0, 1080)
