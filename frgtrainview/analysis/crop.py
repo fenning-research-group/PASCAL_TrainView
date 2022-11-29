@@ -17,80 +17,42 @@ def crop_pl(img, output_shape=None):
     minX, maxX = (200, 1440-200)
     minY, maxY = (0, 1080)
 
-    # create a mask representing each of 4 quadrants
-    centerX = (maxX + minX)//2
-    centerY = (maxY + minY)//2
-    q1 = ((minX, minY), (centerX, centerY))
-    q2 = ((centerX, minY), (maxX, centerY))
-    q3 = ((centerX, centerY), (maxX, maxY))
-    q4 = ((minX, centerY), (centerX, maxY))
-    q = [q1,q2,q3,q4]
+    # apply a median blur filter to remove noise
+    blurred = img
+    iterations = 2
+    for i in range(iterations):
+        blurred = cv2.medianBlur(blurred, 51)
 
-    quadrant_masks = []
-    for i in range(4):
-        mask = np.zeros(img.shape[:2], np.uint8)
-        x1,y1 = q[i][0]
-        x2,y2 = q[i][1]
-        mask[y1:y2, x1:x2] = 1
-        quadrant_masks.append(mask)
+    # now sharpen to amplify edges
+    sharpen_kernel = np.array([[0, -1, 0],
+                    [-1, 5,-1],
+                    [0, -1, 0]])
+    sharpened = cv2.filter2D(blurred, -1, sharpen_kernel)
 
-    # now grayscale
-    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    thresh = cv2.inRange(gray, 250, 256) # threshold on white, the border of sample
+    # do adaptive thresholding to extract sample
+    gray = cv2.cvtColor(sharpened, cv2.COLOR_RGB2GRAY)
+    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 31, -1)
 
-    # use houghline transform to clean up and create border
-    minLineLength = thresh.shape[0]*0.03
-    maxLineGap = 200
-    lines = cv2.HoughLinesP(thresh, 1, np.pi/180, 100, minLineLength=minLineLength, maxLineGap=maxLineGap)
-    if lines is None:
-        lines = np.zeros(0)
+    # find contours        
+    contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    # now draw the lines
-    line_img = np.zeros_like(gray, np.uint8)
-    for r_theta in lines:
-        arr = np.array(r_theta[0], dtype=np.int32)
-        x1, y1, x2, y2 = arr
-        cv2.line(line_img, (x1, y1), (x2, y2), 255, 4)
+    # now get the bounding box of the largest area square, which is probably the sample
+    biggest_rect = None
+    biggest_area = 0
+    for c in contours:
+        # get rotated rectangle from contour
+        rot_rect = cv2.minAreaRect(c)
+        area = cv2.contourArea(c)
 
-    # now find the corners
-    minDistance = 90
-    n_corners = 3
-    quad_corners = []
-    for i in range(4):
-        corners = cv2.goodFeaturesToTrack(line_img, n_corners, 0.10, minDistance=minDistance, mask=quadrant_masks[i])
-        if corners is None:
-            corners = np.zeros(0)
-        corners = np.int0(corners)
-        quad_corners.append(corners)
-        
-    # find bounding box around all the corners found
-    temp = []
-    for x in quad_corners:
-        temp.extend(x)
-    temp = np.array(temp, np.float32)
-    if temp.shape[0] > 0:
-        rot_rect = cv2.minAreaRect(temp)
-    else: # no corners found, can't crop
-        rot_rect = None
-    box = cv2.boxPoints(rot_rect)
-    box = np.int0(box)
+        if area > biggest_area:
+            box = cv2.boxPoints(rot_rect)
+            box = np.int0(box)
+            biggest_rect = box
+            biggest_area = area
 
-    # rearrange box so that it's oriented such that the points are: 
-    # [0] = top left, [1] = bottom left, [2] = top right, [3] = bottom right
-    #  order by distance. The top left is the lowest distance, and bottom right is the greatest distance
-    distances = np.linalg.norm(box, axis=1)
-    idx = np.argsort(distances)
-    box = box[idx]
-
-    # use rectangle corners to perspective transform
-    if output_shape == None:
-        # if output_shape is not provided, then compute it!
-        # we'll just assume we want to keep the same overall size
-        # this computes the sidelengths of the biggest rectangle
-        output_shape = (int(np.linalg.norm(box[2] - box[0])),
-                int(np.linalg.norm(box[1] - box[0])))
-
-    box = np.float32(box)
+    output_shape = (255,255)
+    box = np.float32(biggest_rect)
+    box = box[[0,1,3,2]] # reorder
     output_pts = np.array([
         [0,0],
         [0, output_shape[1]],
