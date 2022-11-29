@@ -87,3 +87,73 @@ def crop_pl(img, output_shape=None):
     M = cv2.getPerspectiveTransform(box, output_pts)
     out = cv2.warpPerspective(img, M, output_shape, flags=cv2.INTER_LINEAR)
     return out, box
+
+
+def _crop_pl_gc(img, output_shape=None):
+    """Helper func. Don't use this directly.
+    Uses the GrabCut algorithm (https://docs.opencv.org/3.4/d8/d83/tutorial_py_grabcut.html) to crop PL image."""
+    # set RNG seed for consistency since GrabCut algorithm is random
+    cv2.setRNGSeed(0)
+
+    # apply a median blur filter to remove noise
+    blurred = img
+    iterations = 2
+    for i in range(iterations):
+        blurred = cv2.medianBlur(blurred, 51)
+
+    # now sharpen to amplify edges
+    sharpen_kernel = np.array([[0, -1, 0],
+                    [-1, 5,-1],
+                    [0, -1, 0]])
+    sharpened = cv2.filter2D(blurred, -1, sharpen_kernel)
+
+    # define the center of the image between the holders
+    minX, maxX = (200, 1440-200)
+    minY, maxY = (0, 1080)
+
+    side_tol = 20
+    # define a slice of the image which definitely contains the sample (the center)
+    cminX, cmaxX = (int(1440//2 - 310), int(1440//2 + 310))
+    cminY, cmaxY = (int(1080//2 - 310), int(1080//2 + 310))
+
+    # define mask for the grabcut
+    mask = np.zeros(img.shape[:2], np.uint8)
+    mask[minY:maxY, minX:maxX] = cv2.GC_PR_FGD # define the probably foreground (sample is contained within this region)
+    mask[:, minX:minX+side_tol] = cv2.GC_PR_BGD
+    mask[:, maxX-side_tol:maxX] = cv2.GC_PR_BGD
+    mask[cminY:cmaxY, cminX:cmaxX] = cv2.GC_FGD # define the foreground (definitely sample)
+
+    # now do grabcut
+    bgdModel = np.zeros((1,65),np.float64)
+    fgdModel = np.zeros((1,65),np.float64)
+    cv2.grabCut(blurred, mask, None, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_MASK)
+    mask2 = np.where((mask==cv2.GC_PR_BGD)|(mask==cv2.GC_BGD),0,1).astype('uint8')
+    mask2 = cv2.morphologyEx(mask2, cv2.MORPH_OPEN, np.ones((5,5), np.uint8), iterations=4)
+    img_gc = img*mask2[:,:,np.newaxis]
+
+    # find corners using the grabcut result as a mask to improve corner detection
+    gray = cv2.cvtColor(sharpened, cv2.COLOR_RGB2GRAY)
+    corners = cv2.goodFeaturesToTrack(gray, 30, 0.01, 1, mask=mask2).astype(np.int0)
+    for c in corners:
+        cv2.circle(img_gc, c[0, :], 20, (0,255,255), -1)
+
+    # find bounding box around all the corners found
+    if corners.shape[0] > 0:
+        rot_rect = cv2.minAreaRect(corners)
+    else: # no corners found, can't crop
+        rot_rect = None
+
+    # now do perspective transform
+    box = cv2.boxPoints(rot_rect)
+    box = box[[0,1,3,2]] # reorder
+    box = np.float32(box)
+    output_pts = np.array([
+        [0,0],
+        [0, output_shape[1]],
+        [output_shape[0], 0],
+        [output_shape[0], output_shape[1]],
+        ], np.float32)
+
+    M = cv2.getPerspectiveTransform(box, output_pts)
+    out = cv2.warpPerspective(img, M, output_shape, flags=cv2.INTER_LINEAR)
+    return out, box
