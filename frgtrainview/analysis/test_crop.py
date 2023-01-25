@@ -1,5 +1,6 @@
 from crop import crop_pl
 import numpy as np
+import cv2
 
 def test_crop_is_square():
     """
@@ -10,9 +11,11 @@ def test_crop_is_square():
     distance_tolerance = 0.10 # acceptable percent difference in width vs height before test fails
     angle_tolerance = 10 # acceptable degree difference from 90 degrees before test fails
 
+    img = None
+
     # compute side lengths and angles from corners of the image
     # 0 = top left, 1 = top right, 2 = bottom left, 3 = bottom right
-    corners = []
+    _, corners = crop_pl(img)
     _is_square(corners, distance_tolerance, angle_tolerance) # all the assertion code in here
 
     
@@ -52,3 +55,22 @@ def _is_square(corners, distance_tolerance:float=0.10, angle_tolerance:float=10)
     is_similar_magnitude = lambda a, b: np.linalg.norm(a) / np.linalg.norm(b) < (1+distance_tolerance)
 
     assert is_similar_magnitude(top_side, left_side), f'Width and length are too different in magnitude, is {np.linalg.norm(top_side)} vs {np.linalg.norm(left_side)}'
+
+
+def test_crop_correct_area():
+    """
+    We know that the based on current magnification, the wafers should take up a specific amount of area of the image.
+    If not enough of the original image is cropped out, then the test fails.
+    If too much of the image is cropped out, then the test fails.
+    Otherwise, the test succeeds.
+    """
+    # in PL img, the wafer region takes up roughly half of the width and most of the height
+    MIN_AREA_PIXELS = 500 * 500
+    MAX_AREA_PIXELS = 1080 * 1080 
+
+    img = None
+    _, corners = crop_pl(img)
+    area = cv2.contourArea(corners)
+
+    assert area > MIN_AREA_PIXELS, f'Crop region is too small, is {area} pixels'
+    assert area < MAX_AREA_PIXELS, f'Crop region is too large, is {area} pixels'
