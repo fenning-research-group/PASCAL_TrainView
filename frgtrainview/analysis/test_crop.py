@@ -1,4 +1,4 @@
-from frgtrainview.analysis.crop import crop_pl
+from crop import crop_pl
 import numpy as np
 
 def test_crop_is_square():
