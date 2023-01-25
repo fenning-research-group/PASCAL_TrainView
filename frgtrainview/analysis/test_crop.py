@@ -65,7 +65,7 @@ def test_crop_correct_area():
     Otherwise, the test succeeds.
     """
     # in PL img, the wafer region takes up roughly half of the width and most of the height
-    MIN_AREA_PIXELS = 500 * 500
+    MIN_AREA_PIXELS = 700 * 700
     MAX_AREA_PIXELS = 1080 * 1080 
 
     img = None
