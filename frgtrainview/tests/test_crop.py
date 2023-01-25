@@ -13,7 +13,20 @@ def test_crop_is_square():
     # compute side lengths and angles from corners of the image
     # 0 = top left, 1 = top right, 2 = bottom left, 3 = bottom right
     corners = []
+    _is_square(corners, distance_tolerance, angle_tolerance) # all the assertion code in here
 
+    
+
+def _is_square(corners, distance_tolerance:float=0.10, angle_tolerance:float=10):
+    """
+    Compute side lengths and angles from corners of a shape to determine if is a square
+
+    Parameters:
+        corners: a 4-length array with (x,y) coordinates
+            0 = top left, 1 = top right, 2 = bottom left, 3 = bottom right
+        distance_tolerance (float): the acceptable percent difference in width vs height before the test fails
+        angle_tolerance (float): the acceptable degree difference from 90 degrees before the test fails
+    """
     top_side = corners[1] - corners[0]
     left_side = corners[2] - corners[0]
     bottom_side = corners[3] - corners[2]
