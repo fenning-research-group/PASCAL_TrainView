@@ -36,19 +36,19 @@ def _is_square(corners, distance_tolerance:float=0.10, angle_tolerance:float=10)
     get_cos = lambda a, b : np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)) # helper function to get the cosine between two vectors
     is_valid_angle = lambda theta : np.abs(theta - 90) < angle_tolerance # helper function to ensure angle is close to 90 degrees
     
-    cos_angle_top_left = get_cos(top_side, left_side)
-    assert is_valid_angle(np.degrees(np.arccos(cos_angle_top_left))), 'Top left is not close to 90 degrees'
+    angle_top_left = np.degrees(np.arccos(get_cos(top_side, left_side)))
+    assert is_valid_angle(angle_top_left), f'Top left is not close to 90 degrees, is {angle_top_left}'
 
-    cos_angle_bottom_right = get_cos(bottom_side, right_side)
-    assert is_valid_angle(np.degrees(np.arccos(cos_angle_bottom_right))), 'Bottom right is not close to 90 degrees'
+    angle_bottom_right = np.degrees(np.arccos(get_cos(bottom_side, right_side)))
+    assert is_valid_angle(angle_bottom_right), f'Bottom right is not close to 90 degrees, is {angle_bottom_right}'
     
-    cos_angle_top_right = get_cos(top_side, right_side)
-    assert is_valid_angle(np.degrees(np.arccos(cos_angle_top_right))), 'Top right is not close to 90 degrees'
+    angle_top_right = np.degrees(np.arccos(get_cos(top_side, right_side)))
+    assert is_valid_angle(angle_top_right), f'Top right is not close to 90 degrees, is {angle_top_right}'
 
-    cos_angle_bottom_left = get_cos(bottom_side, left_side)
-    assert is_valid_angle(np.degrees(np.arccos(cos_angle_bottom_left))), 'Bottom left is not close to 90 degrees'
+    angle_bottom_left = np.degrees(np.arccos(get_cos(bottom_side, left_side)))
+    assert is_valid_angle(angle_bottom_left), f'Bottom left is not close to 90 degrees, is {angle_bottom_left}'
 
     # now assert that width and length are close enough
-    is_similar_magnitude = lambda a, b: np.linalg.norm(a) / np.linalg.norm(b) < distance_tolerance
+    is_similar_magnitude = lambda a, b: np.linalg.norm(a) / np.linalg.norm(b) < (1+distance_tolerance)
 
-    assert is_similar_magnitude(top_side, left_side), 'Width and length are too different in magnitude'
+    assert is_similar_magnitude(top_side, left_side), f'Width and length are too different in magnitude, is {np.linalg.norm(top_side)} vs {np.linalg.norm(left_side)}'
